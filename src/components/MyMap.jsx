@@ -285,9 +285,6 @@ function MyMap() {
   const routingMachineRef = useRef(null);
   const [showTemperatureLayer, setShowTemperatureLayer] = useState(false);
   const [showPrecipitationLayer, setShowPrecipitationLayer] = useState(false);
-  const goToHomePage = () => {
-    window.location.href = "home";
-  };
 
   const handleSelect = (selectedPoint) => {
     console.log("Выбранная точка:", selectedPoint);
@@ -321,23 +318,6 @@ function MyMap() {
 
   return (
     <div>
-      <button
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: 1000,
-          padding: "10px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-        onClick={goToHomePage}
-      >
-        На главную
-      </button>
       <h1 style={{ textAlign: "center" }}>Карта Байкала</h1>
 
       <div style={{ textAlign: "center", marginBottom: "10px" }}>
