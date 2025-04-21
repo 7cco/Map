@@ -1,15 +1,21 @@
 import React from "react";
-import DropDownMenu from "./DDMenu";
-import { points } from "./components/MyMap"; // Импортируем массив точек
 import MyMap from "./components/MyMap";
+import {points} from "./components/MyMap";
 import "leaflet/dist/leaflet.css";
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
+import Carousel from "./Carousel";
 
 function Home() {
+  const carouselItems = points.map((point) => ({
+    image: point.image,
+    description: point.description,
+    name: point.name,
+  }));
     return (
-      <div>
+      <div >
         <h1>Главная страница</h1>
         <p>Добро пожаловать на наш сайт!</p>
+        <Carousel items={carouselItems} />
       </div>
     );
   }
@@ -35,30 +41,30 @@ function Home() {
   function App() {
     return (
       <div>
-        {/* Базовая разметка */}
-        <header>
-          <nav>
-            <ul style={{ display: 'flex', listStyle: 'none', gap: '20px', padding: '10px' }}>
-              <li><Link to="/">Главная</Link></li>
-              <li><Link to="/about">О нас</Link></li>
-              <li><Link to="/contact">Контакты</Link></li>
-              <li><Link to="/map">Карта</Link></li> {/* Ссылка на карту */}
-            </ul>
-          </nav>
+        <header class="main-header">
+            <nav>
+                <Link to="/" class="logo"><img src="http://dummyimage.com/70x70" alt="Логотип" /></Link>
+                <Link to="/" class="sitename"><h1 class="nav">Карта Байкала</h1></Link>
+                <ul class="navigation-list nav">
+                </ul>
+                <Link to="/map" class="map-link">Карта</Link>
+            </nav>
         </header>
-  
-        <main style={{ padding: '20px' }}>
-          {/* Определение маршрутов */}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/map" element={<MyMap />} /> {/* Маршрут для карты */}
-          </Routes>
+        <main>         
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/map" element={<MyMap />} /> {/* Маршрут для карты */}
+                <Route path="/about" element={<About/>}/>
+                <Route path="/contact" element={<Contact/>}/>
+              </Routes>
         </main>
-  
-        <footer style={{ marginTop: '50px', textAlign: 'center' }}>
-          <p>&copy; 2023 Мой сайт. Все права защищены.</p>
+        <footer class="main-footer">
+            <ul class="footer-list">
+                <li class="footer-list-item">
+                    <li><Link to="/contact">Контакты</Link></li>
+                    <li><Link to="/about">О нас</Link></li>
+                </li>
+            </ul>
         </footer>
       </div>
     );

@@ -54,3 +54,31 @@ code {
   .dropdown-list li:hover {
     background-color: #f0f0f0;
   }
+  .main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f8f9fa; /* Цвет фона */
+}
+
+/* Стили для ссылки на карту */
+.map-link {
+    text-decoration: none;
+    color: #007bff; 
+    font-weight: bold;
+    position: absolute;
+    top: 111px; 
+    left: 1672px;
+    z-index: 10; 
+}
+
+.map-link:hover {
+text-decoration: underline;
+}
+
+.sitename
+{
+position: absolute;
+left: 100px;
+}
