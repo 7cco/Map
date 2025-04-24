@@ -24,7 +24,6 @@ const Carousel = ({ items }) => {
     if (clickPosition < rect.width / 2) {
       handlePrev();
     } else {
-      // Иначе двигаем вперед
       handleNext();
     }
   };

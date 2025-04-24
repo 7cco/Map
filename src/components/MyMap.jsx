@@ -11,6 +11,47 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-control-geocoder"
 import "lrm-graphhopper"
 import DropDownMenu from "../DDMenu";
+import axios from 'axios';
+
+const overpassUrl = "https://overpass-api.de/api/interpreter";
+
+async function fetchHotels(bounds) {
+  const [southWest, northEast] = bounds;
+  const [minLat, minLng] = southWest;
+  const [maxLat, maxLng] = northEast;
+
+  const query = `
+    [out:json];
+    (
+      node["tourism"="hotel"](${minLat},${minLng},${maxLat},${maxLng});
+      way["tourism"="hotel"](${minLat},${minLng},${maxLat},${maxLng});
+      relation["tourism"="hotel"](${minLat},${minLng},${maxLat},${maxLng});
+    );
+    out center;
+  `;
+
+  try {
+    const response = await axios.post(overpassUrl, query);
+    return response.data.elements.map(element => {
+      const coordinates = element.center 
+        ? [element.center.lat, element.center.lon]
+        : [element.lat, element.lon];
+        
+      return {
+        name: element.tags.name || "Неизвестный отель",
+        coordinates: coordinates,
+        description: element.tags.description || "",
+        website: element.tags.website || "",
+        phone: element.tags.phone || "",
+        stars: element.tags.stars || ""
+      };
+    });
+  } catch (error) {
+    console.error("Ошибка при получении данных об отелях:", error);
+    return [];
+  }
+}
+
 
 export const points = [
   { 
@@ -257,8 +298,13 @@ const customicon=new Icon
 ({
   iconUrl: "https://images.icon-icons.com/317/PNG/512/map-marker-icon_34392.png",
   iconSize: [38, 38],
-
 })
+
+const restaurantIcon = new Icon
+({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/34/34261.png",
+  iconSize: [30, 30],
+});
 
 const createRoutingMachineLayer = (props) => {
   const instance = L.Routing.control({
@@ -273,6 +319,8 @@ const createRoutingMachineLayer = (props) => {
     fitSelectedRoutes: true,
     showAlternatives: true,
     //router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb'),
+     language: 'ru',
+     createMarker: function(i, wp) {return L.marker(wp.latLng, {icon: customicon});}
   });
   return instance;
 };
@@ -289,33 +337,58 @@ function MyMap() {
     [47.0, 93.0], // Юго-западный угол (минимальная широта, минимальная долгота)
     [56.0, 118.0] // Северо-восточный угол (максимальная широта, максимальная долгота)
   ];
+  const [hotels, setHotels] = useState([]);
+  const [allPoints, setAllPoints] = useState([]);
+
+useEffect(() => {
+  const loadPoints = async () => {
+    const fetchedHotels = await fetchHotels(baykalBounds);
+    const hotelsWithTypes = fetchedHotels.map(hotel => ({...hotel, type: 'hotel'}));
+    const pointsWithTypes = points.map(point => ({...point, type: 'point'}));
+    setAllPoints([...pointsWithTypes, ...hotelsWithTypes]);
+  };
+  
+  loadPoints();
+}, []);
+  
+  useEffect(() => {
+    const loadHotels = async () => {
+      const fetchedHotels = await fetchHotels(baykalBounds);
+      setHotels(fetchedHotels);
+    };
+    
+    loadHotels();
+  }, []);
 
   const handleSelect = (selectedPoint) => {
     console.log("Выбранная точка:", selectedPoint);
-
-    if (waypoints.length === 0) {
-      setWaypoints([selectedPoint.coordinates]);
-    } else if (waypoints.length === 1) {
-      setWaypoints((prevWaypoints) => [...prevWaypoints, selectedPoint.coordinates]);
-    } else {
-      setWaypoints([selectedPoint.coordinates]);
-    }
-
-    if(mapRef.current)
-    {
+    setWaypoints((prevWaypoints) => {
+      // Проверяем, существует ли уже эта точка
+      const isDuplicate = prevWaypoints.some(waypoint => 
+        waypoint[0] === selectedPoint.coordinates[0] && 
+        waypoint[1] === selectedPoint.coordinates[1]
+      );
+      if (isDuplicate) {
+        return prevWaypoints; // Не добавляем дубликаты
+      }
+      return [...prevWaypoints, selectedPoint.coordinates];
+    });
+    
+    if(mapRef.current) {
       mapRef.current.flyTo(selectedPoint.coordinates, 13);
     }
   };
-
   useEffect(() => {
     if (routingMachineRef.current && waypoints.length > 1) {
       routingMachineRef.current.setWaypoints(waypoints.map((coord) => L.latLng(coord)));
     }
   }, [waypoints]);
 
-  const filteredPoints = selectedClass === "all"
-  ? points
-  : points.filter((point) => point.class === selectedClass);
+  const filteredPoints = allPoints.filter(point => {
+    if (selectedClass === "all") return true;
+    if (selectedClass === "hotel") return point.type === "hotel";
+    return point.class === selectedClass && point.type === "point";
+  });
 
   const apiKey = "6195eabc1b6674227d3a4d2b7d562224";
 
@@ -332,6 +405,8 @@ function MyMap() {
         <button onClick={() => setShowPrecipitationLayer(!showPrecipitationLayer)}>
           {showPrecipitationLayer ? "Скрыть осадки" : "Показать осадки"}
         </button>
+        <button onClick={() => setSelectedClass("hotel")}>Отели</button>
+        <button onClick={() => setWaypoints([])}>Очистить маршрут</button>
       </div>   
 
       <div
@@ -447,25 +522,56 @@ function MyMap() {
           {waypoints.length > 0 && (
             <RoutingMachine
             ref={(instance) => {
-              routingMachineRef.current = instance; // Сохраняем ссылку на экземпляр RoutingMachine
+              routingMachineRef.current = instance;
             }}
             waypoints={waypoints.map((coord) => L.latLng(coord))}
           />
           )}
 
 
-           {filteredPoints.map((point, index) => (
-            <Marker key={index} position={point.coordinates} icon={customicon}>
-              <Popup maxHeight={"500"} maxWidth={"500"}>
-                <b>{point.name}</b>
-                <br />
-                {point.description}
-                {point.image && <img src={point.image} alt={point.name} style={{width: "100%" }}/>}
-              </Popup>
-            </Marker>
-          ))}
+{filteredPoints.map((point, index) => (
+  <Marker 
+    key={index} 
+    position={point.coordinates} 
+    icon={point.type === "hotel" ? restaurantIcon : customicon}
+  >
+    <Popup maxHeight={"500"} maxWidth={"500"}>
+      <b>{point.name}</b>
+      <br />
+      {point.description}
+      {point.image && <img src={point.image} alt={point.name} style={{width: "100%" }}/>}
+      {point.type === "hotel" && (
+        <>
+          {point.phone && <>Телефон: {point.phone}<br /></>}
+          {point.website && <>Сайт: <a href={point.website} target="_blank" rel="noopener noreferrer">{point.website}</a><br /></>}
+          {point.stars && <>Звезды: {point.stars}<br /></>}
+        </>
+          )}
+      </Popup>
+    </Marker>
+      ))}
         </MapContainer>
         </h2>
+            {waypoints.length > 0 && (
+            <div style={{ 
+              position: "absolute", 
+              top: "60px", 
+              left: "10px", 
+              zIndex: 1000, 
+              backgroundColor: "white", 
+              padding: "10px", 
+              borderRadius: "5px", 
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)" 
+            }}>
+              <p>Точки маршрута:</p>
+              {waypoints.map((waypoint, index) => (
+                <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Точка {index + 1}</span>
+                  <button onClick={() => setWaypoints(waypoints.filter((_, i) => i !== index))}>Удалить</button>
+                </div>
+              ))}
+            </div>
+          )}
           <div>
         <h4 className="DD">
           <DropDownMenu options={points} onSelect={handleSelect}/>
@@ -475,5 +581,4 @@ function MyMap() {
 
   );
 }
-
 export default MyMap;
