@@ -319,11 +319,12 @@ const createRoutingMachineLayer = (props) => {
     fitSelectedRoutes: true,
     showAlternatives: true,
     //router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb'),
-     language: 'ru',
-     createMarker: function(i, wp) {return L.marker(wp.latLng, {icon: customicon});}
+    language: 'ru',
+    createMarker: function(i, wp) {return L.marker(wp.latLng, {icon: customicon});}
   });
   return instance;
 };
+
 const RoutingMachine = createControlComponent(createRoutingMachineLayer);
 
 function MyMap() {
@@ -334,64 +335,75 @@ function MyMap() {
   const [showTemperatureLayer, setShowTemperatureLayer] = useState(false);
   const [showPrecipitationLayer, setShowPrecipitationLayer] = useState(false);
   const baykalBounds = [
-    [47.0, 93.0], // Юго-западный угол (минимальная широта, минимальная долгота)
-    [56.0, 118.0] // Северо-восточный угол (максимальная широта, максимальная долгота)
+    [47.0, 93.0], 
+    [56.0, 118.0]
   ];
-  const [hotels, setHotels] = useState([]);
   const [allPoints, setAllPoints] = useState([]);
+  const [waypointHotelMarkers, setWaypointHotelMarkers] = useState([]);
 
-useEffect(() => {
-  const loadPoints = async () => {
-    const fetchedHotels = await fetchHotels(baykalBounds);
-    const hotelsWithTypes = fetchedHotels.map(hotel => ({...hotel, type: 'hotel'}));
-    const pointsWithTypes = points.map(point => ({...point, type: 'point'}));
-    setAllPoints([...pointsWithTypes, ...hotelsWithTypes]);
-  };
-  
-  loadPoints();
-}, []);
-  
   useEffect(() => {
-    const loadHotels = async () => {
-      const fetchedHotels = await fetchHotels(baykalBounds);
-      setHotels(fetchedHotels);
-    };
-    
-    loadHotels();
-  }, []);
-
-  const handleSelect = (selectedPoint) => {
-    console.log("Выбранная точка:", selectedPoint);
-    setWaypoints((prevWaypoints) => {
-      // Проверяем, существует ли уже эта точка
-      const isDuplicate = prevWaypoints.some(waypoint => 
-        waypoint[0] === selectedPoint.coordinates[0] && 
-        waypoint[1] === selectedPoint.coordinates[1]
-      );
-      if (isDuplicate) {
-        return prevWaypoints; // Не добавляем дубликаты
+    const fetchNearbyHotels = async () => {
+      const newWaypointHotels = [];
+      
+      for (const [index, waypoint] of waypoints.entries()) {
+        const radius = 0.05; // Примерно 5 км (в градусах)
+        const bounds = [
+          [waypoint[0] - radius, waypoint[1] - radius],
+          [waypoint[0] + radius, waypoint[1] + radius]
+        ];
+        
+        const nearbyHotels = await fetchHotels(bounds);
+        newWaypointHotels.push(...nearbyHotels.map(hotel => ({
+          ...hotel,
+          waypointIndex: index // Связываем отель с точкой маршрута
+        })));
       }
-      return [...prevWaypoints, selectedPoint.coordinates];
-    });
-    
-    if(mapRef.current) {
-      mapRef.current.flyTo(selectedPoint.coordinates, 13);
+      
+      setWaypointHotelMarkers(newWaypointHotels);
+    };
+  
+    if (waypoints.length > 0) {
+      fetchNearbyHotels();
+    } else {
+      setWaypointHotelMarkers([]); // Очищаем маркеры, если маршрут пуст
     }
-  };
+  }, [waypoints]);
+  useEffect(() => {
+    const loadPoints = async () => {
+      const pointsWithTypes = points.map(point => ({...point, type: 'point'}));
+      setAllPoints(pointsWithTypes);
+    };
+    loadPoints();
+  }, []);
   useEffect(() => {
     if (routingMachineRef.current && waypoints.length > 1) {
       routingMachineRef.current.setWaypoints(waypoints.map((coord) => L.latLng(coord)));
     }
   }, [waypoints]);
 
+  const handleSelect = (selectedPoint) => {
+    console.log("Выбранная точка:", selectedPoint);
+    setWaypoints((prevWaypoints) => {
+      const isDuplicate = prevWaypoints.some(waypoint => 
+        waypoint[0] === selectedPoint.coordinates[0] && 
+        waypoint[1] === selectedPoint.coordinates[1]
+      );
+      if (isDuplicate) {
+        return prevWaypoints;
+      }
+      return [...prevWaypoints, selectedPoint.coordinates];
+    });
+    if(mapRef.current) {
+      mapRef.current.flyTo(selectedPoint.coordinates, 13);
+    }
+  };
+
   const filteredPoints = allPoints.filter(point => {
     if (selectedClass === "all") return true;
-    if (selectedClass === "hotel") return point.type === "hotel";
     return point.class === selectedClass && point.type === "point";
   });
 
   const apiKey = "6195eabc1b6674227d3a4d2b7d562224";
-
 
   return (
     <div>
@@ -405,10 +417,9 @@ useEffect(() => {
         <button onClick={() => setShowPrecipitationLayer(!showPrecipitationLayer)}>
           {showPrecipitationLayer ? "Скрыть осадки" : "Показать осадки"}
         </button>
-        <button onClick={() => setSelectedClass("hotel")}>Отели</button>
         <button onClick={() => setWaypoints([])}>Очистить маршрут</button>
       </div>   
-
+      
       <div
         style={{
           position: "absolute",
@@ -488,9 +499,6 @@ useEffect(() => {
     </div>
         )}
         </div>
-      
-      
-
       <h2 className="Map">
         <MapContainer
           ref={mapRef}
@@ -550,6 +558,23 @@ useEffect(() => {
       </Popup>
     </Marker>
       ))}
+      {/* Маркеры отелей возле точек маршрута */}
+  {waypointHotelMarkers.map((hotel, index) => (
+    <Marker 
+      key={index} 
+      position={hotel.coordinates} 
+      icon={restaurantIcon}
+    >
+      <Popup>
+        <b>{hotel.name}</b>
+        <br />
+        {hotel.description && <>{hotel.description}<br /></>}
+        {hotel.phone && <>Телефон: {hotel.phone}<br /></>}
+        {hotel.website && <>Сайт: <a href={hotel.website} target="_blank" rel="noopener noreferrer">{hotel.website}</a><br /></>}
+        {hotel.stars && <>Звезды: {hotel.stars}<br /></>}
+      </Popup>
+    </Marker>
+  ))}
         </MapContainer>
         </h2>
             {waypoints.length > 0 && (
@@ -564,12 +589,19 @@ useEffect(() => {
               boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)" 
             }}>
               <p>Точки маршрута:</p>
-              {waypoints.map((waypoint, index) => (
-                <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span>Точка {index + 1}</span>
-                  <button onClick={() => setWaypoints(waypoints.filter((_, i) => i !== index))}>Удалить</button>
-                </div>
-              ))}
+              {waypoints.map((waypoint, index) => {
+                // Находим соответствующую точку в массиве allPoints
+                const point = allPoints.find(p => 
+                  p.coordinates[0] === waypoint[0] && p.coordinates[1] === waypoint[1]
+                );
+                return (
+                  <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    {/* Отображаем название точки, если оно найдено */}
+                    <span>{point ? point.name : `Точка ${index + 1}`}</span>
+                    <button onClick={() => setWaypoints(waypoints.filter((_, i) => i !== index))}>Удалить</button>
+                  </div>
+                );
+              })}
             </div>
           )}
           <div>
