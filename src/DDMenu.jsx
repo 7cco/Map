@@ -5,7 +5,8 @@ class DropDownMenu extends Component {
     super(props);
     this.state = {
       isOpen: false,
-      searchQuery: "", // Новое состояние для хранения текста поиска
+      searchQuery: "",
+      visitedPoints: [] // Инициализация состояния для отслеживания посещенных точек
     };
   }
 
@@ -33,41 +34,77 @@ class DropDownMenu extends Component {
     document.removeEventListener("mousedown", this.handleClickOutside);
   }
 
+  toggleVisited = (pointId) => {
+    this.setState((prevState) => {
+      const { visitedPoints } = prevState;
+      if (visitedPoints.includes(pointId)) {
+        return { visitedPoints: visitedPoints.filter(id => id !== pointId) };
+      } else {
+        return { visitedPoints: [...visitedPoints, pointId] };
+      }
+    });
+  };
+
   render() {
-    const { isOpen, searchQuery } = this.state;
+    const { isOpen, searchQuery, visitedPoints } = this.state;
     const { options = [], onSelect } = this.props;
 
-    // Фильтрация опций на основе текста поиска
-    const filteredOptions = options.filter((option) =>
-      option.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const totalPoints = Array.isArray(options) ? options.length : 0;
+    const visitedCount = visitedPoints.length;
+    const progress = totalPoints > 0 ? (visitedCount / totalPoints) * 100 : 0;
+
+    const filteredOptions = options
+      .filter((option) =>
+        option.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
     return (
       <div
         ref={(node) => (this.dropdownRef = node)}
         className="dropdown-menu"
       >
-        {/* Строка поиска */}
+        {/* Progress Bar */}
+        <div style={{ marginBottom: '10px' }}>
+          <progress value={progress} max="100" style={{ width: '100%' }} />
+          <span>{visitedCount} из {totalPoints} посещено</span>
+        </div>
+
+        {/* Поиск */}
         <input
           type="text"
           placeholder="Поиск..."
           value={searchQuery}
           onChange={this.handleSearchChange}
-          onClick={this.toggleMenu} // Открываем меню при клике на строку поиска
+          onClick={this.toggleMenu}
           className="dropdown-search"
         />
 
-        {/* Выпадающее меню */}
+        {/* Список достопримечательностей */}
         {isOpen && (
           <ul className="dropdown-list">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
-                <li key={option.id} onClick={() => onSelect(option)}>
-                  {option.name}
+                <li key={option.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span onClick={() => onSelect(option)}>{option.name}</span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.toggleVisited(option.id);
+                    }}
+                    style={{
+                      background: visitedPoints.includes(option.id) ? 'green' : 'gray',
+                      color: 'white',
+                      border: 'none',
+                      padding: '5px 10px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {visitedPoints.includes(option.id) ? 'Посещено' : 'Отметить'}
+                  </button>
                 </li>
               ))
             ) : (
-              <li className="no-results">Нет результатов</li> // Сообщение, если нет совпадений
+              <li className="no-results">Нет результатов</li>
             )}
           </ul>
         )}

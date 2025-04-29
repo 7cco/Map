@@ -50,7 +50,11 @@ code {
   .dropdown-list li {
     padding: 10px;
     cursor: pointer;
-    width: 100px;
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
   }
   
   .dropdown-list li:hover {
@@ -84,4 +88,6 @@ text-decoration: underline;
 position: absolute;
 left: 100px;
 }
-
+.dropdown-list button {
+  margin-left: 10px;
+}
