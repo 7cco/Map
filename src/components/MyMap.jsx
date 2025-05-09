@@ -352,7 +352,7 @@ const createRoutingMachineLayer = (props) => {
     draggableWaypoints: true,
     fitSelectedRoutes: true,
     showAlternatives: true,
-    //router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb'),
+    router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb' , {urlParameters: {vehicle: props.transportMode}}),
     language: 'ru',
     createMarker: function(i, wp) {return L.marker(wp.latLng, {icon: customicon});}
   });
@@ -362,6 +362,7 @@ const createRoutingMachineLayer = (props) => {
 const RoutingMachine = createControlComponent(createRoutingMachineLayer);
 
 function MyMap() {
+  const [transportMode, setTransportMode] = useState("foot");
   const [selectedClass, setSelectedClass] = useState("all");
   const mapRef=useRef(null)
   const [waypoints, setWaypoints] = useState([]);
@@ -374,8 +375,7 @@ function MyMap() {
   ];
   const [allPoints, setAllPoints] = useState([]);
   const [waypointHotelMarkers, setWaypointHotelMarkers] = useState([]);
-
-  useEffect(() => {
+    useEffect(() => {
     const fetchNearbyHotels = async () => {
       const newWaypointHotels = [];
       
@@ -437,6 +437,15 @@ function MyMap() {
     return point.class === selectedClass && point.type === "point";
   });
 
+  const handleTransportModeChange = (mode) => {
+    setTransportMode(mode); // Обновляем состояние
+    if (routingMachineRef.current && waypoints.length > 1) {
+      // Обновляем параметры маршрутизатора
+      routingMachineRef.current.getRouter().options.urlParameters.vehicle = mode;
+      routingMachineRef.current.route(); // Пересчитываем маршрут
+    }
+  };
+
   const apiKey = "6195eabc1b6674227d3a4d2b7d562224";
 
   return (
@@ -452,6 +461,9 @@ function MyMap() {
           {showPrecipitationLayer ? "Скрыть осадки" : "Показать осадки"}
         </button>
         <button onClick={() => setWaypoints([])}>Очистить маршрут</button>
+        <button onClick={() => handleTransportModeChange("foot")}>Пешком</button>
+          <button onClick={() => handleTransportModeChange("bike")}>На велосипеде</button>
+          <button onClick={() => handleTransportModeChange("car")}>На машине</button>
       </div>   
       
       <div
@@ -471,7 +483,7 @@ function MyMap() {
             <p>Легенда температуры:</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <span style={{ width: "20px", height: "20px", backgroundColor: "rgba(130, 22, 146, 1)" }}></span>
+                <span style={{ width: "1vh", height: "20px", backgroundColor: "rgba(130, 22, 146, 1)" }}></span>
                 <span>-40°C</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -509,6 +521,8 @@ function MyMap() {
             </div>
           </div>
         )}
+
+
          {showPrecipitationLayer && (
     <div style={{ backgroundColor: "white", padding: "10px", borderRadius: "5px" }}>
       <p>Легенда осадков:</p>
