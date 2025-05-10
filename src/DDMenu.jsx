@@ -64,8 +64,8 @@ class DropDownMenu extends Component {
         className="dropdown-menu"
       >
         {/* Progress Bar */}
-        <div style={{ marginBottom: '10px' }}>
-          <progress value={progress} max="100" style={{ width: '100%' }} />
+        <div class="progressbar">
+          <progress value={progress} max="100" style={{ width: '500%'}} />
           <span>{visitedCount} из {totalPoints} посещено</span>
         </div>
 

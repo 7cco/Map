@@ -6,7 +6,55 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.site{
+  background-color: #C3F4FF;
+}
+footer{
+  border-top: 0.5vh solid #2AAE3A;
+}
+a{
+  text-decoration: none;
+}
+.logo{
+  display: block;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  left: 2.2vw;
+  top: 1.3vh;
+}
+.map-link{
+  display: block;
+  width: 12.8vw;
+  height: 7.3vh;
+  background-color: #5DC1FF;
+  position: absolute;
+  left: 84%;
+  top: 4.6vh;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+}
 
+header{
+  height: 16.7vh;
+  background-color: #9ee6ee;
+}
+.sitename{
+  position: absolute;
+  display: block;
+  left: 20%;
+  text-align: center;
+  width: 61%;
+  height: 130px;
+  padding-top: 1.6vh;
+  font-size: 36px; 
+  line-height: 52px;
+  font-weight: 400;
+  color: black;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -17,8 +65,11 @@ code {
   .dropdown-menu {
     position: absolute;
     display: inline-block;
-    top: 20rem;
-    right: 5rem;
+    width: 13vw;
+    height: 31vh;
+    position: absolute;
+    left: 87.1vw;
+    top: 29.4vh;
   }
   
   .dropdown-toggle {
@@ -26,7 +77,7 @@ code {
     background-color: #007bff;
     color: white;
     border: none;
-    cursor: pointer;
+    cursor: pointer;    
   }
   
   .dropdown-toggle:hover {
@@ -34,8 +85,8 @@ code {
   }
   
   .dropdown-list {
+    border-radius: 8px;
     position: absolute;
-    top: 100%;
     left:0;
     background-color: white;
     border: 1px solid #ccc;
@@ -43,51 +94,147 @@ code {
     margin: 0;
     padding: 0;
     z-index: 10;
-    max-height: 400px;
-    overflow-y: auto;
+     max-height: 30vh; /* Ограничиваем максимальную высоту */
+  overflow-y: auto; /* Добавляем вертикальную прокрутку */
+  width: 80%; /* Убедитесь, что ширина соответствует родительскому элементу */
   }
   
   .dropdown-list li {
     padding: 10px;
     cursor: pointer;
-    width: 200px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+    width: 100px;
   }
   
   .dropdown-list li:hover {
     background-color: #f0f0f0;
   }
-  .main-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background-color: #f8f9fa; /* Цвет фона */
+.nav{
+  display: inline-block;
+}
+.footer-list{
+  text-align: center;
+}
+ul{
+  list-style-type: none;
 }
 
-/* Стили для ссылки на карту */
-.map-link {
-    text-decoration: none;
-    color: #007bff; 
-    font-weight: bold;
-    position: absolute;
-    top: 111px; 
-    left: 1672px;
-    z-index: 10; 
+.tempbut{
+  position: absolute;
+  left: 63.5vw;
+  top: 59.7vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
 }
-
-.map-link:hover {
-text-decoration: underline;
+.prebut{
+  position: absolute;
+  left: 74.9vw;
+  top: 59.7vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
 }
-
-.sitename
+.setbut{
+  position: absolute;
+  left: 63.5vw;
+  top: 68.3vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.bikebut{
+  position: absolute;
+  left: 63.5vw;
+  top: 77.4vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.footbut{
+  position: absolute;
+  left: 74.9vw;
+  top: 68.3vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.carbut{
+  position: absolute;
+  left: 74.9vw;
+  top: 77.4vh;
+  background-color: #5DC1FF;
+  width: 10.3vw;
+  height: 7.1vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.allbut{
+  position: absolute;
+  left: 19vw;
+  top: 17.3vh;
+  background-color: #5DC1FF;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.urbanbut{
+  position: absolute;
+  left: 30.5vw;
+  top: 17.3vh;
+  background-color: #5DC1FF;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.naturalbut{
+  position: absolute;
+  left: 42vw;
+  top: 17.3vh;
+  background-color: #5DC1FF;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.progressbar
 {
-position: absolute;
-left: 100px;
+  position: absolute;
+  right:171vh;
+  top: 52.5vh;
 }
-.dropdown-list button {
-  margin-left: 10px;
+.progressbar span {
+  white-space: nowrap; /* Убедимся, что текст не переносится */
+  position: relative;
+  left:73vh;
+  bottom: 2.2vh;
 }

@@ -451,26 +451,26 @@ function MyMap() {
   return (
     <div>
       <div style={{ textAlign: "center", marginBottom: "10px" }}>
-        <button onClick={() => setSelectedClass("all")}>Все</button>
-        <button onClick={() => setSelectedClass("urban")}>Городские</button>
-        <button onClick={() => setSelectedClass("natural")}>Природные</button>
-        <button onClick={() => setShowTemperatureLayer(!showTemperatureLayer)}>
+        <button class="allbut" onClick={() => setSelectedClass("all")}>Все</button>
+        <button class="urbanbut" onClick={() => setSelectedClass("urban")}>Городские</button>
+        <button class="naturalbut" onClick={() => setSelectedClass("natural")}>Природные</button>
+        <button class="tempbut" onClick={() => setShowTemperatureLayer(!showTemperatureLayer)}>
           {showTemperatureLayer ? "Скрыть температуру" : "Показать температуру"}
         </button>
-        <button onClick={() => setShowPrecipitationLayer(!showPrecipitationLayer)}>
+        <button class="prebut" onClick={() => setShowPrecipitationLayer(!showPrecipitationLayer)}>
           {showPrecipitationLayer ? "Скрыть осадки" : "Показать осадки"}
         </button>
-        <button onClick={() => setWaypoints([])}>Очистить маршрут</button>
-        <button onClick={() => handleTransportModeChange("foot")}>Пешком</button>
-          <button onClick={() => handleTransportModeChange("bike")}>На велосипеде</button>
-          <button onClick={() => handleTransportModeChange("car")}>На машине</button>
-      </div>   
+        <button class="setbut" onClick={() => setWaypoints([])}>Очистить маршрут</button>
+        <button class="footbut" onClick={() => handleTransportModeChange("foot")}>Пешком</button>
+          <button class="bikebut" onClick={() => handleTransportModeChange("bike")}>На велосипеде</button>
+          <button class="carbut" onClick={() => handleTransportModeChange("car")}>На машине</button>
+      </div>
       
       <div
         style={{
           position: "absolute",
-          top: "10px",
-          right: "10px",
+          top: "26.4vh",
+          left: "63vw",
           zIndex: 1000,
           backgroundColor: "white",
           padding: "10px",
@@ -550,7 +550,7 @@ function MyMap() {
       <h2 className="Map">
         <MapContainer
           ref={mapRef}
-          style={{ height: "80vh", width: "150vh" }}
+          style={{ height: "60.3vh", width: "54vw" }}
           zoom={10}
           center={[53.617, 107.483]}
           maxZoom={18}

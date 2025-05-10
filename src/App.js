@@ -1,4 +1,3 @@
-import React from "react";
 import MyMap from "./components/MyMap";
 import {points} from "./components/MyMap";
 import "leaflet/dist/leaflet.css";
@@ -12,9 +11,7 @@ function Home() {
     name: point.name,
   }));
     return (
-      <div >
-        <h1>Главная страница</h1>
-        <p>Добро пожаловать на наш сайт!</p>
+      <div>
         <Carousel items={carouselItems} />
       </div>
     );
@@ -40,14 +37,14 @@ function Home() {
   
   function App() {
     return (
-      <div>
+      <div class="site">
         <header class="main-header">
             <nav>
-                <Link to="/" class="logo"><img src="http://dummyimage.com/70x70" alt="Логотип" /></Link>
-                <Link to="/" class="sitename"><h1 class="nav">Карта Байкала</h1></Link>
+                <Link to="/" class="logo"><img src="./logo.png" alt="Логотип" /></Link>
+                <Link to="/" class="sitename"><h1 class="nav">Навигация по Байкалу</h1></Link>
                 <ul class="navigation-list nav">
                 </ul>
-                <Link to="/map" class="map-link">Карта</Link>
+                <Link to="/map" class="map-link">Интерактивная карта</Link>
             </nav>
         </header>
         <main>         
