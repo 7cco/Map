@@ -12,7 +12,12 @@ function Home() {
   }));
     return (
       <div>
+      <div style={{ textAlign: "center", marginBottom: "10px" }}>
+        <button class="mapbut"><Link to="/map" class="map-link">Интерактивная карта</Link></button>
+      </div>
+      <div className="Carusel">
         <Carousel items={carouselItems} />
+      </div>
       </div>
     );
   }
@@ -35,16 +40,13 @@ function Home() {
     );
   }
   
-  function App() {
+function App() {
     return (
-      <div class="site">
+      <div className="site">
         <header class="main-header">
             <nav>
-                <Link to="/" class="logo"><img src="./logo.png" alt="Логотип" /></Link>
-                <Link to="/" class="sitename"><h1 class="nav">Навигация по Байкалу</h1></Link>
-                <ul class="navigation-list nav">
-                </ul>
-                <Link to="/map" class="map-link">Интерактивная карта</Link>
+                <Link to="/" class="logo"><img src="./logo.png" alt="Логотип"/></Link>
+                <h1 class="sitename">Навигация по Байкалу</h1>
             </nav>
         </header>
         <main>         
