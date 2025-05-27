@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Carousel.css";
 
-const Carousel = ({ items }) => {
+const Carousel = ({ items, onNavigate }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleNext = () => {
@@ -19,12 +19,32 @@ const Carousel = ({ items }) => {
   const handleClick = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const clickPosition = event.clientX - rect.left;
+    const centerThreshold = 0.4; // 40% от ширины элемента
 
-    // Если клик был слева от середины, двигаем назад
-    if (clickPosition < rect.width / 2) {
-      handlePrev();
+    // Если клик был в центральной области (между 30% и 70% ширины)
+    if (clickPosition > rect.width * centerThreshold && 
+        clickPosition < rect.width * (1 - centerThreshold)) {
+      console.log("Center click detected"); // Отладочная информация
+      console.log("Current item:", items[activeIndex]); // Отладочная информация
+      console.log("Coordinates:", items[activeIndex].coordinates); // Отладочная информация
+      
+      // Проверяем наличие координат
+      if (items[activeIndex]?.coordinates) {
+        onNavigate('/map', { 
+          state: { 
+            coordinates: items[activeIndex].coordinates 
+          }
+        });
+      } else {
+        console.error("No coordinates found for item:", items[activeIndex]);
+      }
     } else {
-      handleNext();
+      // Если клик был слева или справа от центра, двигаем карусель
+      if (clickPosition < rect.width / 2) {
+        handlePrev();
+      } else {
+        handleNext();
+      }
     }
   };
 
@@ -39,7 +59,7 @@ const Carousel = ({ items }) => {
               transform: `translateX(${(index - activeIndex) * 100}%)`,
             }}
           >
-            <img src={item.image} alt={item.description}  olt={item.name}/>
+            <img src={item.image} alt={item.description} />
             <p>{item.name}<br/>{item.description}</p>
           </div>
         ))}

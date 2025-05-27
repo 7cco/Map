@@ -12,6 +12,7 @@ import "leaflet-control-geocoder"
 import "lrm-graphhopper"
 import DropDownMenu from "../DDMenu";
 import axios from 'axios';
+import { useLocation } from "react-router-dom";
 
 const overpassUrl = "https://overpass-api.de/api/interpreter";
 
@@ -352,8 +353,9 @@ const createRoutingMachineLayer = (props) => {
     draggableWaypoints: true,
     fitSelectedRoutes: true,
     showAlternatives: true,
-    router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb' , {urlParameters: {vehicle: props.transportMode}}),
+    router: new L.Routing.GraphHopper('963fa20f-6f52-47ce-9976-dd77fb66acbb' , {urlParameters: {vehicle: props.transportMode, locale: 'ru-RU'}}),
     language: 'ru',
+    formatter: new L.Routing.Formatter(),
     createMarker: function(i, wp) {return L.marker(wp.latLng, {icon: customicon});}
   });
   return instance;
@@ -375,7 +377,24 @@ function MyMap() {
   ];
   const [allPoints, setAllPoints] = useState([]);
   const [waypointHotelMarkers, setWaypointHotelMarkers] = useState([]);
-    useEffect(() => {
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("Location state:", location.state); // Отладочная информация
+    if (location.state?.coordinates) {
+      console.log("Moving to coordinates:", location.state.coordinates); // Отладочная информация
+      // Добавляем небольшую задержку, чтобы карта успела инициализироваться
+      setTimeout(() => {
+        if (mapRef.current) {
+          mapRef.current.flyTo(location.state.coordinates, 13);
+        } else {
+          console.error("Map reference is not initialized yet.");
+        }
+      }, 500); // Увеличиваем задержку до 500 мс
+    }
+  }, [location.state]);
+
+  useEffect(() => {
     const fetchNearbyHotels = async () => {
       const newWaypointHotels = [];
       
@@ -470,7 +489,7 @@ function MyMap() {
         style={{
           position: "absolute",
           top: "26.4vh",
-          left: "63vw",
+          left: "86vw",
           zIndex: 1000,
           backgroundColor: "white",
           padding: "10px",
@@ -483,7 +502,7 @@ function MyMap() {
             <p>Легенда температуры:</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <span style={{ width: "1vh", height: "20px", backgroundColor: "rgba(130, 22, 146, 1)" }}></span>
+                <span style={{ width: "20px", height: "20px", backgroundColor: "rgba(130, 22, 146, 1)" }}></span>
                 <span>-40°C</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -559,7 +578,6 @@ function MyMap() {
           maxBoundsViscosity={1.0}
         >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        
          Слой осадков 
         {showTemperatureLayer && (
             <TileLayer

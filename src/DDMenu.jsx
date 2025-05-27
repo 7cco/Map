@@ -3,11 +3,18 @@ import React, { Component } from "react";
 class DropDownMenu extends Component {
   constructor(props) {
     super(props);
+     const savedVisitedPoints = JSON.parse(localStorage.getItem("visitedPoints")) || [];
     this.state = {
       isOpen: false,
       searchQuery: "",
-      visitedPoints: [] // Инициализация состояния для отслеживания посещенных точек
+      visitedPoints: savedVisitedPoints, // Инициализация состояния для отслеживания посещенных точек
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.visitedPoints !== this.state.visitedPoints) {
+      localStorage.setItem("visitedPoints", JSON.stringify(this.state.visitedPoints));
+    }
   }
 
   toggleMenu = () => {
@@ -37,13 +44,15 @@ class DropDownMenu extends Component {
   toggleVisited = (pointId) => {
     this.setState((prevState) => {
       const { visitedPoints } = prevState;
-      if (visitedPoints.includes(pointId)) {
-        return { visitedPoints: visitedPoints.filter(id => id !== pointId) };
-      } else {
-        return { visitedPoints: [...visitedPoints, pointId] };
-      }
+      const updatedVisitedPoints = visitedPoints.includes(pointId)
+        ? visitedPoints.filter(id => id !== pointId)
+        : [...visitedPoints, pointId];
+      return { visitedPoints: updatedVisitedPoints };
     });
   };
+   componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
 
   render() {
     const { isOpen, searchQuery, visitedPoints } = this.state;
@@ -96,6 +105,7 @@ class DropDownMenu extends Component {
                       color: 'white',
                       border: 'none',
                       padding: '5px 10px',
+                      borderRadius: '10px',
                       cursor: 'pointer'
                     }}
                   >
