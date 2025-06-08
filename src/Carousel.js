@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import "./Carousel.css";
-
+const i=2
 const Carousel = ({ items, onNavigate }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleNext = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === items.length - 1 ? 0 : prevIndex + 2
+      prevIndex === items.length*2 - i ? 0 : prevIndex + i
     );
   };
 
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? items.length - 1 : prevIndex - 2
+      prevIndex === 0 ? items.length*2 - i : prevIndex - i
     );
   };
 
@@ -25,18 +25,18 @@ const Carousel = ({ items, onNavigate }) => {
     if (clickPosition > rect.width * centerThreshold && 
         clickPosition < rect.width * (1 - centerThreshold)) {
       console.log("Center click detected"); // Отладочная информация
-      console.log("Current item:", items[activeIndex]); // Отладочная информация
-      console.log("Coordinates:", items[activeIndex].coordinates); // Отладочная информация
+      console.log("Current item:", items[activeIndex/2], activeIndex/2); // Отладочная информация
+      console.log("Coordinates:", items[activeIndex/2].coordinates); // Отладочная информация
       
       // Проверяем наличие координат
-      if (items[activeIndex]?.coordinates) {
+      if (items[activeIndex/2]?.coordinates) {
         onNavigate('/map', { 
           state: { 
-            coordinates: items[activeIndex].coordinates 
+            coordinates: items[activeIndex/2].coordinates 
           }
         });
       } else {
-        console.error("No coordinates found for item:", items[activeIndex]);
+        console.error("No coordinates found for item:", items[activeIndex/2]);
       }
     } else {
       // Если клик был слева или справа от центра, двигаем карусель
@@ -59,8 +59,7 @@ const Carousel = ({ items, onNavigate }) => {
               transform: `translateX(${(index - activeIndex) * 100}%)`,
             }}
           >
-            <img src={item.image} alt={item.description} />
-            <p>{item.name}<br/>{item.description}</p>
+            <img src={item.image}/>
           </div>
         ))}
       </div>
