@@ -35,7 +35,7 @@ a{
 
 header{
   height: 12vh;
-  background-color: #29B56F;
+  background-color: #1B9A5B;
 }
 .sitename{
   font-family: 'Roboto';
@@ -116,8 +116,8 @@ ul{
 .tempbut{
   position: absolute;
   left: 1vw;
-  top: 65vh;
-  background-color: #5DC1FF;
+  top: 17vh;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -129,8 +129,8 @@ ul{
 .prebut{
   position: absolute;
   left: 1vw;
-  top: 75vh;
-  background-color: #5DC1FF;
+  top: 27vh;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -143,7 +143,7 @@ ul{
   position: absolute;
   left: 88vw;
   top: 77vh;
-  background-color: #5DC1FF;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -156,7 +156,7 @@ ul{
   position: absolute;
   left: 63.5vw;
   top: 76.4vh;
-  background-color: #5DC1FF;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -169,7 +169,7 @@ ul{
   position: absolute;
   left: 74.9vw;
   top: 67.3vh;
-  background-color: #5DC1FF;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -181,7 +181,7 @@ ul{
   position: absolute;
   left: 74.9vw;
   top: 76.4vh;
-  background-color: #5DC1FF;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -189,42 +189,7 @@ ul{
   border: none;
   border-radius: 10px;
 }
-.allbut{
-  position: absolute;
-  left: 19vw;
-  top: 17.3vh;
-  background-color: #5DC1FF;
-  width: 10vw;
-  height: 4vh;
-  text-align: center;
-  color: white;
-  border: none;
-  border-radius: 10px;
-}
-.urbanbut{
-  position: absolute;
-  left: 30.5vw;
-  top: 17.3vh;
-  background-color: #5DC1FF;
-  width: 10vw;
-  height: 4vh;
-  text-align: center;
-  color: white;
-  border: none;
-  border-radius: 10px;
-}
-.naturalbut{
-  position: absolute;
-  left: 42vw;
-  top: 17.3vh;
-  background-color: #5DC1FF;
-  width: 10vw;
-  height: 4vh;
-  text-align: center;
-  color: white;
-  border: none;
-  border-radius: 10px;
-}
+
 .progressbar
 {
   position: absolute;
@@ -243,29 +208,18 @@ ul{
   position: absolute;
   right: 5vh;
 }
-.rb{
 
-  padding: 10px 20px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-}
 .rotbut{
-  max-width: 5vw;
-  max-height: 5vh;
-  position: absolute;
-  left: 70%;
-  top: 4.6vh;
-}
-.mapbut{
   width: 5vw;
-  height: 5vh;
   position: absolute;
   left: 84%;
-  top: 4.6vh;
+  top: 1vh;
+}
+.mapbut{
+  width: 20vw;
+  position: absolute;
+  left: 84%;
+  top: 1vh;
 }
 
 
@@ -275,7 +229,7 @@ ul{
   position: absolute;
   left: 88vw;
   top: 58vh;
-  background-color: #5DC1FF;
+  background-color: #1B9A5B;
   width: 10.3vw;
   height: 7.1vh;
   text-align: center;
@@ -285,7 +239,7 @@ ul{
   z-index: 1001;
 }
 .buildRouteBut.active {
-  background-color: #3a9cd9;
+  background-color: #1B9A5B;
 }
 .transport-dropdown {
   position: absolute;
@@ -322,4 +276,127 @@ ul{
 
 .transport-dropdown li:hover {
   background-color: #f0f0f0;
+}
+
+.text-content {
+  width: 100vw;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-top: 1.5vh;
+  text-align: center;
+}
+
+.route-carousel {
+  width: 100%;
+  max-width: 16.25vw;
+  margin: 0 auto;
+}
+
+.route-carousel .carousel-container {
+  width: 100%;
+  height: 10%;
+  top: 0;
+  position: relative;
+}
+
+.route-carousel .carousel-item img {
+  width: 100%;
+
+  height: 31.3vh;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.allbut{
+  position: absolute;
+  left: 19vw;
+  top: 12.5vh;
+  background-color: #1B9A5B;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.urbanbut{
+  position: absolute;
+  left: 30.5vw;
+ top: 12.5vh;
+  background-color: #1B9A5B;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.naturalbut{
+  position: absolute;
+  left: 42vw;
+  top: 12.5vh;
+  background-color: #1B9A5B;
+  width: 10vw;
+  height: 4vh;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+.progressbar
+{
+  position: absolute;
+  right: 76vw;
+  top: 60vh;
+}
+.hb{
+  padding: 10px 20px;
+  background: #1B9A5B;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 95vh;
+  left: 45.5vw;
+}
+.button-container{
+  margin-left: 6.8vw;
+  margin-right: 6.8vw;
+  margin-top: 12vh;
+  display: flex;
+  justify-content: space-between;
+}
+.card{
+  margin-right: 6.1vw;
+}
+.card:last-child{
+  margin-right: 0;
+}
+.rb{
+  padding: 10px 20px;
+  background: #1B9A5B;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  width: 10.6vw;
+  height: 6.8vh;
+  display: block;
+  margin: 0 auto;
+  margin-top: 5px;
+}
+.carousel-button{
+  display: none;
+}
+.buildRB{
+  padding: 10px 20px;
+  background: #1B9A5B;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  margin: 0 auto;
 }

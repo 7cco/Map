@@ -19,11 +19,11 @@ function Home() {
         <Carousel items={carouselItems} onNavigate={navigate}/>
       </div>
       <div style={{ textAlign: "center", marginBottom: "10px" }}>
-        <nav class="mapbut"><Link to="/map"><img src="./map.png"/></Link></nav>
+        <nav class="mapbut"><Link to="/map"><img src="./map white.png"/></Link></nav>
       </div>
       <div style={{ textAlign: "center", marginTop: "10px" }}>
         <nav class="rotbut"><Link to="/routes"><img src="./routes.png"/></Link></nav>
-        <Link to="/" class="logo"><img src="./logo.png" alt="Логотип"/></Link>
+        <Link to="/" class="logo"><img src="./river white.png" alt="Логотип"/></Link>
       </div>
       </div>
     );

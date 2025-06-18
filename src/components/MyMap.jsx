@@ -1,3 +1,4 @@
+import MarkerClusterGroup from "react-leaflet-markercluster";
 import React, { useEffect, useRef, useState} from "react";
 import { MapContainer, TileLayer, Popup, Marker} from "react-leaflet";
 import {Icon} from "leaflet";
@@ -13,7 +14,7 @@ import "lrm-graphhopper"
 import DropDownMenu from "../DDMenu";
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
-import bbt from "../photo/большая байкальская тропа.jpg"
+import bbt from "../photo/Большая Байкальская тропа.jpg"
 import bk from "../photo/Большие коты.png"
 import bg from "../photo/Большое Голоустное.jpg"
 import bu from "../photo/Бугульдейка.jpg"
@@ -47,8 +48,35 @@ import sham from "../photo/Шаман камень.jpg"
 import shamm from "../photo/Шаманский мыс.jpg"
 import bai from "../photo/байкальск.jpg"
 import mram from "../photo/Мраморный карьер.jpg"
+import PlaceClusterIcon from "../photo/placecluster.png"
+import HotelClusterIcon from "../photo/hotelcluster.png"
 
 const overpassUrl = "https://overpass-api.de/api/interpreter";
+
+const createPlaceClusterIcon = (cluster) => {
+  return L.divIcon({
+    html: `
+      <div class="custom-cluster-icon">
+        <img src="${PlaceClusterIcon}" alt="Cluster" />
+        <span>${cluster.getChildCount()}</span>
+      </div>
+    `,
+    className: 'cluster-icon-container',
+    iconSize: L.point(45, 45),
+  });
+};
+const createHotelClusterIcon = (cluster) => {
+  return L.divIcon({
+    html: `
+      <div class="custom-cluster-icon">
+        <img src="${HotelClusterIcon}" alt="Cluster" />
+        <span>${cluster.getChildCount()}</span>
+      </div>
+    `,
+    className: 'cluster-icon-container',
+    iconSize: L.point(45, 45),
+  });
+};
 
 async function fetchHotels(bounds) {
   const [southWest, northEast] = bounds;
@@ -361,7 +389,7 @@ export const points = [
   }
 ];
 
-const mappoints = [
+export const mappoints = [
   { 
     id: 1,
     name: "Байкальск",
@@ -690,6 +718,15 @@ function MyMap() {
   const toggleTransportDropdown = () => {
   setIsTransportDropdownOpen(!isTransportDropdownOpen);
 };
+
+useEffect(() => {
+  if (location.state?.waypoints) {
+    setWaypoints(location.state.waypoints);
+    // Автоматически открываем выпадающий список транспорта
+    setIsTransportDropdownOpen(true);
+  }
+}, [location.state]);
+
   useEffect(() => {
     console.log("Location state:", location.state); // Отладочная информация
     if (location.state?.coordinates) {
@@ -704,6 +741,7 @@ function MyMap() {
       }, 500); // Увеличиваем задержку до 500 мс
     }
   }, [location.state]);
+
   useEffect(() => {
   const handleClickOutside = (event) => {
     if (isTransportDropdownOpen && !event.target.closest('.transport-dropdown') && !event.target.classList.contains('buildRouteBut')) {
@@ -814,7 +852,7 @@ function MyMap() {
       <div
         style={{
           position: "absolute",
-          top: "15.4vh",
+          top: "35vh",
           left: "1vw",
           zIndex: 1000,
           backgroundColor: "white",
@@ -926,7 +964,7 @@ function MyMap() {
           />
           )}
 
-
+<MarkerClusterGroup iconCreateFunction={createPlaceClusterIcon}>
 {filteredPoints.map((point, index) => (
   <Marker 
     key={index} 
@@ -948,7 +986,9 @@ function MyMap() {
       </Popup>
     </Marker>
       ))}
+</MarkerClusterGroup>
       {/* Маркеры отелей возле точек маршрута */}
+<MarkerClusterGroup iconCreateFunction={createHotelClusterIcon}>
   {waypointHotelMarkers.map((hotel, index) => (
     <Marker 
       key={index} 
@@ -965,6 +1005,7 @@ function MyMap() {
       </Popup>
     </Marker>
   ))}
+</MarkerClusterGroup>
         </MapContainer>
       </h2>
             {waypoints.length > 0 && (

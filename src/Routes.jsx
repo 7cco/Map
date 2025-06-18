@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
+import Carousel from './Carousel';
+import { mappoints } from './components/MyMap';
+import { useNavigate } from 'react-router-dom';
 
-// Component for displaying text content
-const TextDisplay = ({ text }) => {
+// Component for displaying text content and carousel
+const TextDisplay = ({ text, waypoints }) => {
+  const navigate = useNavigate();
   return (
-    <div className="text-display">
+    <div>
       <div className="text-content">
         {text}
       </div>
+       {waypoints && waypoints.length > 0 && (
+        <button 
+          className="buildRB"
+          onClick={() => navigate('/map', { state: { waypoints } })}
+        >
+          Построить маршрут на карте
+        </button>
+      )}
     </div>
   );
 };
@@ -16,7 +28,25 @@ const TextDisplay = ({ text }) => {
 // Main routes page component
 const CRoutes = () => {
   const [selectedText, setSelectedText] = useState(null);
-
+  const [selectedWaypoints, setSelectedWaypoints] = useState(null);
+  const routePoints = {
+    route1: mappoints.filter(point => 
+      ['Листвянка', 'Большая Байкальская тропа (начало)', 'Большие Коты', 'Скрипер', 'Чёртов мост', 'Сухое озеро', 'Большое Голоустное']
+      .includes(point.name)
+    ),
+    route2: mappoints.filter(point => 
+      ['Слюдянка', 'Пик Черского', 'Озеро Сердце']
+      .includes(point.name)
+    ),
+    route3: mappoints.filter(point => 
+      ['Листвянка', 'Порт Байкал', 'Кругобайкальская железная дорога', 'Култук', 'Слюдянка']
+      .includes(point.name)
+    ),
+    route4: mappoints.filter(point => 
+      ['Гора Соболиная', 'Байкальск', 'Выдрино', 'Тёплые озёра']
+      .includes(point.name)
+    )
+  };
   const textContents = {
     text1: `Маршрут: Листвянка – Большая Байкальская тропа – Большие Коты – Скрипер – Чёртов мост – Сухое озеро – Большое Голоустное.
 Продолжительность: 2-3 дня.
@@ -42,18 +72,49 @@ const CRoutes = () => {
 `
   };
 
+const handleRouteSelect = (routeNumber) => {
+  setSelectedText(textContents[`text${routeNumber}`]);
+  
+  const waypoints = routePoints[`route${routeNumber}`]
+    .map(point => point.coordinates);
+  setSelectedWaypoints(waypoints);
+};
+
   return (
     <div className="main-page">
       <div className="button-container">
-        <button className="rb" onClick={() => setSelectedText(textContents.text1)}>От Листвянки до Большого Голоустного</button>
-        <button className="rb" onClick={() => setSelectedText(textContents.text2)}>Маршрут на Пик Черского</button>
-        <button className="rb" onClick={() => setSelectedText(textContents.text3)}>По Кругобайкальской железной дороге</button>
-        <button className="rb" onClick={() => setSelectedText(textContents.text4)}>От горы Соболиной до Тёплых озёр</button>
+        <div className="card">
+          <div className="route-carousel">
+            <Carousel items={routePoints["route1"]} onNavigate={() => {}} />
+          </div>
+          <button className="rb" onClick={() => handleRouteSelect(1)}>От Листвянки до Большого Голоустного</button>
+        </div>
+        <div className="card">
+          <div className="route-carousel">
+            <Carousel items={routePoints["route2"]} onNavigate={() => {}} />
+          </div>
+          <button className="rb" onClick={() => handleRouteSelect(2)}>Маршрут на Пик Черского</button>
+        </div>
+        <div className="card">
+          <div className="route-carousel">
+            <Carousel items={routePoints["route3"]} onNavigate={() => {}} />
+          </div>
+          <button className="rb" onClick={() => handleRouteSelect(3)}>По Кругобайкальской железной дороге</button>
+        </div>
+        <div className="card">
+          <div className="route-carousel">
+            <Carousel items={routePoints["route4"]} onNavigate={() => {}} />
+          </div>
+          <button className="rb" onClick={() => handleRouteSelect(4)}>От горы Соболиной до Тёплых озёр</button>
+        </div>
       </div>
 
-      {selectedText && <TextDisplay text={selectedText} />}
+      {selectedText && <TextDisplay 
+      text={selectedText}
+      waypoints={selectedWaypoints}
+      />}
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <button className="rb">
+        <button className="hb">
           <Link to="/" className="map-link">Вернуться на главную</Link>
         </button>
       </div>
